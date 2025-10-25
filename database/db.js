@@ -26,6 +26,3 @@ export default async function connectPrep() {
   }
 }
 
-const req = await connectPrep()
-const res = await req.query(`SELECT * FROM USERS`);
-console.log(res[0])
