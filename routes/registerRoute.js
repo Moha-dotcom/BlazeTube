@@ -26,33 +26,5 @@ router.post("/register",  async (req, res) => {
         })
     }
 })
-router.post("/", async (req, res) => {
-  try {
-    const result = await userService.login(req.body);
-    console.log(result.token)
-    logger.info(`✅ User logged in: ${req.body.emailAddress}`);
-    console.log(result)
-    res.cookie("token", result.token, { httpOnly: true, secure: true })
-  res.redirect("http://localhost:4000/login/profile")
-
-  } catch (err) {
-    logger.error(`❌ Login failed: ${err.message}`);
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
-  }
-});
-
-router.get('/profile', authenticateToken, async (req, res, next) => {
-  res.json({ success: true, user: req.user });
-});
-
-
-router.get('/dashboard', authenticateToken, async (req, res) => {
- res.json({ success: true, message: "Dashboard data" });
-})
-
-
 
 export default router
