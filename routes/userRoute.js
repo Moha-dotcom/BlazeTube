@@ -1,30 +1,31 @@
 import express from "express";
 import { v4 as uuidv4 } from 'uuid';
-import {connectPrep} from "../database/db.js"
+
+import * as userService from "../services/userService.js"; // ✅ use * as
+
+import logger from "../logger.js"
 const router = express.Router();
 
-const dbConnection = connectPrep()
-
-router.post("/register", verificationMiddleWare,  (req, res) => {
-    const user = uuidv4()
-    const {username, emailAddress, password} = req.body;
-    // Check if Username is available and email exists
 
 
+
+
+router.post("/register",  async (req, res) => {
+    try {
+        const result = await userService.registerUser(req.body)
+        logger.info(`✅ User registered: ${req.body.emailAddress}`);
+        res.status(201).json({
+            success : true,
+            message : result.message || "User registered successsFully"
+        })
+
+    }catch(err){
+        logger.error(`❌ Registration failed: ${err.message}`);
+        res.status(400).json({
+            success: false,
+            message : err.message
+        })
+    }
 })
 
-
-function verificationMiddleWare (req, res, next) {
-   const {username, emailAddress, password} = req.body;
-    if(checkUsername(username).length === 0){
-        // That means the username is available
-    }else{
-        // Send out a message saying user is available choose anotherone
-    }
- 
-}
-
-async function checkUsername(username){
-    const res = await dbConnection.query(`SELECT username from USERS WHERE username = ${username}`)
-    return res;
-}
+export default router
