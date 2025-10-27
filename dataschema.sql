@@ -1,0 +1,7 @@
+CREATE TABLE videos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(50),
+  video_name VARCHAR(255),
+  video_data LONGBLOB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

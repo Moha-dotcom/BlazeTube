@@ -8,12 +8,12 @@ export function authenticateToken(req, res, next){
    
      const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1] || req.cookies?.token;
-if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: "Token missing",
-    });
-  }
+        if (!token) {
+            return res.status(401).json({
+            success: false,
+            message: "Token missing",
+            });
+        }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {

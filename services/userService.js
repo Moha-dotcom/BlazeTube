@@ -9,9 +9,6 @@ import jwt from "jsonwebtoken";
 
 dotenv.config({ path: `/Users/user/Documents/BlazeTube/.env` });
 
-
-
-
 export  async function registerUser(user) {
   const { emailAddress, password } = user;
   // 1️⃣ Check if email exists
