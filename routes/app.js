@@ -11,7 +11,8 @@ import fs, { read, stat } from "fs"
 import { v4 as uuidv4 } from 'uuid';
 import dbConnect from "../database/db.js"
 const connection = await dbConnect();
-import fileBaseStorage from "../filebaseStorage/filebasestorage.js"
+import storage from "../filebaseStorage/filebasestorage.js"
+
 const app = express();
 const PORT = 4000;
 app.use(cookieParser());
