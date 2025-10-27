@@ -17,7 +17,7 @@ import logger from "../logger.js";
 
 
 async function storeVideo(videoPath, userId, uniqueKey, result, videoName) {
-    logger.info("Storing Video File to the Database....")
+  
   try {
      const video_id = uuidv4()
   const query = `
@@ -42,4 +42,21 @@ async function storeVideo(videoPath, userId, uniqueKey, result, videoName) {
 }
 
 
-export default {storeVideo}
+
+async function getVideoMetadata(userId, videoId) {
+    try{
+        const [rows] = await connection.execute(
+             "SELECT video_key, mime_type FROM videos WHERE user_id = ? AND id = ?",
+            [userId, videoId]
+        )
+
+
+        return rows[0];
+    }catch(err){
+        logger.error(err)
+
+    }
+    
+}
+
+export default {storeVideo, getVideoMetadata}
