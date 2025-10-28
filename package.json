@@ -1,6 +1,7 @@
 {
   "type": "module",
   "dependencies": {
+    "@tailwindcss/cli": "^4.1.16",
     "aws-sdk": "^2.1692.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -17,6 +18,7 @@
     "npm": "^11.6.2",
     "pino": "^10.1.0",
     "pino-pretty": "^13.1.2",
+    "tailwindcss": "^4.1.16",
     "uuid": "^13.0.0"
   }
 }

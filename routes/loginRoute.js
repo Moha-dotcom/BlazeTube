@@ -27,16 +27,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get('/profile', authenticateToken, async (req, res, next) => {
-  res.send("Here were are in Profile Page")
-  // res.json({ success: true, user: req.user });
-});
-
-
-router.get('/dashboard', authenticateToken, async (req, res) => {
-    
- res.json({ success: true, message: "Here were are in Dashboard Page" });
-})
 
 
 

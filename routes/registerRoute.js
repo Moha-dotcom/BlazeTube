@@ -5,10 +5,6 @@ import logger from "../logger.js"
 import { authenticateToken } from "../ middleware/authMiddleware.js"
 const router = express.Router();
 
-
-
-
-
 router.post("/register",  async (req, res) => {
     try {
         const result = await userService.registerUser(req.body)
