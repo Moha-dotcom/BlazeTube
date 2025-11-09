@@ -9,8 +9,20 @@ import videoService from "../services/videoService.js"
 import { get } from "http";
 import { connect } from "http2";
 import videoRepo from "../repositories/videoRepo.js";
+import {fileBaseStorage} from "../filebaseStorage/filebasestorage.js"
+import { EventEmitter } from "events";
+import e from "express";
+import {log, error} from "console"
+import path from "path";
+import swig from "swig"
+import { BucketManager, ObjectManager } from "@filebase/sdk";
+const params = { Bucket: "blazetubevideos" };
 
-import s3 from "../filebaseStorage/filebasestorage.js"
+const objectManager = new ObjectManager(process.env.FILEBASE_ACCESSKEY,  process.env.FILEBASE_SECRETKEY, {
+  bucket: "blazetubevideos"
+});
+
+
 
 const uploadDir = "uploads";
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -24,10 +36,52 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-router.get("/videos", (req, res) => {
-     logger.info("Listing all video Files.....")
-    res.send("Get List of All Videos")
+function loginMiddleware (req, res, next) {
+    console.log("Login Middleware in Action")
+    next()
+
+}
+
+function userAuthentication (req, res, next) {
+    console.log("User Auth  in Action")
+    next()
+
+}
+
+
+router.get('/delete-videos', async(req, res) => {
+      const result = await objectManager.delete("blazetubevideos")
+  res.status(201).send(result)
 })
+
+
+router.get("/", (req, res) => {
+    res.render('dashboard.html')
+})
+
+router.get("/videos", [loginMiddleware, userAuthentication], (req, res) => {
+
+  fileBaseStorage.listObjectsV2(params, (err, data) => {
+    if (err) {
+      logger.error("Error Listing Files", err);
+      return res.status(500).send("Error fetching videos");
+    } else {
+        const videoListWithUrls = data.Contents.map((file) => ({
+             name: file.Key.split('/').pop(),
+           url: fileBaseStorage.getSignedUrl("getObject", {
+        Bucket: params.Bucket,
+        Key: file.Key,
+        Expires: 60 * 5 // 5 minutes
+      }),
+             size: file.Size,
+            lastModified: file.LastModified
+        }))
+      logger.info("Files listed successfully", data.Contents);
+      return res.json({ videos: videoListWithUrls });
+    }
+  });
+
+});
 
 
 router.get("/video/:userId/:videoId", async( req, res) => {
@@ -47,7 +101,7 @@ router.get("/video/:userId/:videoId", async( req, res) => {
         const {video_key, mime_type} = data;
         // 2️⃣ Stream video directly from Filebase
         const params = { Bucket: "blazetubevideos", Key: video_key };
-        const stream = s3.fileBaseStorage.getObject(params).createReadStream();
+        const stream = fileBaseStorage.fileBaseStorage.getObject(params).createReadStream();
 
          res.setHeader("Content-Type", mime_type);
         stream.pipe(res);

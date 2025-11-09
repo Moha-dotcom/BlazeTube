@@ -12,13 +12,23 @@ import { v4 as uuidv4 } from 'uuid';
 import dbConnect from "../database/db.js"
 const connection = await dbConnect();
 import storage from "../filebaseStorage/filebasestorage.js"
-
+import swig from "swig"
 const app = express();
 const PORT = 4000;
+import { fileURLToPath } from "url";
+
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname( __filename);
+console.log(__dirname)
 app.use(cookieParser());
 // Middleware to parse JSON
 app.use(express.json());
 
+app.engine('html', swig.renderFile);
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname,  "..", 'public', 'views'));
+app.use(express.static(path.join(__dirname, "..",  'public')))
 
 
 // Use the router
